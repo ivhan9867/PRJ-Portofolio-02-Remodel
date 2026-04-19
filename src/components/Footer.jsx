@@ -68,17 +68,17 @@ export default function Footer() {
             <div>
               <WordReveal text="Let's Upgrade Your" delay={0}
                 className="font-display font-bold text-[#e8e6f0] leading-tight"
-                style={{ fontSize: 'clamp(1.8rem,5vw,3.5rem)' }} />
+                style={{ fontSize: 'clamp(1.6rem,5vw,3.2rem)' }} />
               <WordReveal text="Website/Application." delay={0.1}
                 className="font-display font-bold text-[#e8e6f0] leading-tight"
-                style={{ fontSize: 'clamp(1.8rem,5vw,3.5rem)' }} />
+                style={{ fontSize: 'clamp(1.6rem,5vw,3.2rem)' }} />
             </div>
 
             <motion.a href="mailto:vhan47@email.com" data-cursor
               initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-              className="px-8 py-3 bg-[#0c1020] text-[#e8e6f0] rounded-full font-body text-[0.85rem] font-medium border border-white/10 hover:border-white/20 transition-all duration-300">
+              className="relative overflow-hidden btn-sweep px-8 py-3 bg-[#0c1020] text-[#e8e6f0] rounded-full font-body text-[0.85rem] font-medium border border-white/10 hover:border-white/20 transition-all duration-300">
               Contact Me
             </motion.a>
           </div>

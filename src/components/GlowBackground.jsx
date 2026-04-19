@@ -1,35 +1,47 @@
-// CSS-only glow blobs — more visible, matches Fini's blue/purple aesthetic
+// More visible CSS-only glow blobs — blue/purple like Fini, clearly visible
 export default function GlowBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Main blue — top center/right */}
-      <div className="blob1 absolute rounded-full" style={{
-        width: 750, height: 550,
-        top: '-8%', right: '-12%',
-        background: 'radial-gradient(ellipse, rgba(55,85,220,0.28) 0%, rgba(45,65,190,0.12) 45%, transparent 70%)',
+      {/* Primary blue — top right, most dominant */}
+      <div className="blob1 absolute" style={{
+        width: 800, height: 600,
+        top: '-15%', right: '-10%',
+        borderRadius: '50%',
+        background: 'radial-gradient(ellipse at center, rgba(60,90,230,0.35) 0%, rgba(50,75,200,0.18) 40%, transparent 70%)',
+        filter: 'blur(60px)',
+      }} />
+
+      {/* Purple — mid left */}
+      <div className="blob2 absolute" style={{
+        width: 650, height: 560,
+        top: '20%', left: '-15%',
+        borderRadius: '50%',
+        background: 'radial-gradient(ellipse at center, rgba(115,55,215,0.28) 0%, rgba(90,40,180,0.12) 40%, transparent 70%)',
         filter: 'blur(70px)',
       }} />
-      {/* Purple — mid left */}
-      <div className="blob2 absolute rounded-full" style={{
-        width: 600, height: 520,
-        top: '25%', left: '-12%',
-        background: 'radial-gradient(ellipse, rgba(110,55,210,0.22) 0%, rgba(85,40,170,0.08) 45%, transparent 70%)',
-        filter: 'blur(85px)',
-      }} />
+
       {/* Blue — lower center */}
-      <div className="blob3 absolute rounded-full" style={{
-        width: 700, height: 380,
-        top: '55%', left: '15%',
-        background: 'radial-gradient(ellipse, rgba(45,75,200,0.2) 0%, rgba(55,80,200,0.07) 45%, transparent 70%)',
-        filter: 'blur(90px)',
-      }} />
-      {/* Purple bottom right */}
-      <div className="blob1 absolute rounded-full" style={{
-        width: 500, height: 420,
-        bottom: '0%', right: '0%',
-        animationDelay: '-9s',
-        background: 'radial-gradient(ellipse, rgba(95,45,185,0.18) 0%, transparent 65%)',
+      <div className="blob3 absolute" style={{
+        width: 750, height: 400,
+        top: '55%', left: '10%',
+        borderRadius: '50%',
+        background: 'radial-gradient(ellipse at center, rgba(50,80,210,0.25) 0%, rgba(55,80,200,0.1) 40%, transparent 70%)',
         filter: 'blur(80px)',
+      }} />
+
+      {/* Purple accent — bottom right */}
+      <div className="blob1 absolute" style={{
+        width: 550, height: 450,
+        bottom: '-5%', right: '-5%',
+        borderRadius: '50%',
+        animationDelay: '-10s',
+        background: 'radial-gradient(ellipse at center, rgba(100,45,190,0.22) 0%, transparent 65%)',
+        filter: 'blur(70px)',
+      }} />
+
+      {/* Subtle center ambient — ties it all together */}
+      <div className="absolute inset-0" style={{
+        background: 'radial-gradient(ellipse at 55% 35%, rgba(55,80,200,0.1) 0%, transparent 50%)',
       }} />
     </div>
   )
