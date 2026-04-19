@@ -6,5 +6,5 @@ import react from '@vitejs/plugin-react'
 // If using custom domain or <username>.github.io → keep '/'
 export default defineConfig({
   plugins: [react()],
-  base: '/',
+  base: 'PRJ-Portofolio-02-Remodel',
 })
