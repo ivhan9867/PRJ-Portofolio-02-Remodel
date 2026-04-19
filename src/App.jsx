@@ -9,24 +9,23 @@ import Footer from './components/Footer'
 
 export default function App() {
   return (
-    <>
-      {/* Grain - fixed, clipped inside its own element via overflow:hidden in CSS */}
+    // Root: no overflow hidden here — let fixed elements sit freely
+    <div style={{ position:'relative', minHeight:'100vh', background:'#07080f', overflowX:'hidden' }}>
+      {/* Grain: fixed, self-clipping via overflow:hidden in CSS */}
       <div className="grain-overlay" />
-      {/* Glow blobs - fixed behind everything */}
+      {/* Glow blobs behind everything */}
       <GlowBackground />
-      {/* Custom cursor */}
+      {/* Cursor */}
       <Cursor />
-      {/* Main wrapper - clip horizontal overflow only */}
-      <div className="relative min-h-screen" style={{ background: '#07080f', overflowX: 'hidden' }}>
-        <Navbar />
-        <main>
-          <Hero />
-          <Projects />
-          <About />
-          <Experience />
-          <Footer />
-        </main>
-      </div>
-    </>
+      {/* Page content */}
+      <Navbar />
+      <main>
+        <Hero />
+        <Projects />
+        <About />
+        <Experience />
+        <Footer />
+      </main>
+    </div>
   )
 }

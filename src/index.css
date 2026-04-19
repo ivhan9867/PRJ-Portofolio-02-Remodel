@@ -5,18 +5,11 @@
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #07080f;
-    --accent: #c9a84c;
-    --text: #e8e6f0;
-    --muted: #52526e;
-  }
-
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: #07080f;
+    color: #e8e6f0;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
     cursor: none;
@@ -28,89 +21,85 @@
   ::selection { background: rgba(201,168,76,0.2); color: #e8e6f0; }
 }
 
-/* ── Grain fix: use pseudo on a fixed element, NO translate animation ──────── */
-/* Instead we swap between two pre-offset positions using opacity */
+/* ── Grain — fixed, NO transform, uses background-position only ── */
 .grain-overlay {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9990;
-  overflow: hidden; /* critical — clip any overflow */
+  overflow: hidden;
 }
 .grain-overlay::before {
   content: '';
   position: absolute;
-  /* Oversized but clipped by parent overflow:hidden */
-  inset: -10px;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  animation: grainAnim 0.5s steps(1) infinite;
+  inset: 0;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 250px 250px;
+  animation: grainPos 0.45s steps(1) infinite;
 }
-@keyframes grainAnim {
-  0%   { background-position: 0px 0px }
-  10%  { background-position: -20px -15px }
-  20%  { background-position: 15px -30px }
-  30%  { background-position: -10px 20px }
-  40%  { background-position: 25px 10px }
-  50%  { background-position: -15px -10px }
-  60%  { background-position: 10px 25px }
-  70%  { background-position: -25px 5px }
-  80%  { background-position: 20px -20px }
-  90%  { background-position: -5px 15px }
-  100% { background-position: 0px 0px }
+@keyframes grainPos {
+  0%   { background-position: 0 0 }
+  11%  { background-position: -30px -20px }
+  22%  { background-position: 20px -40px }
+  33%  { background-position: -10px 30px }
+  44%  { background-position: 40px 15px }
+  55%  { background-position: -20px -15px }
+  66%  { background-position: 15px 40px }
+  77%  { background-position: -40px 8px }
+  88%  { background-position: 25px -30px }
+  100% { background-position: 0 0 }
 }
 
-/* ── Blob drifts ─────────────────────────────────────────────────── */
+/* ── Blob keyframes ── */
 @keyframes blobDrift1 {
-  0%,100% { transform: translate(0px,   0px) scale(1)    }
-  33%     { transform: translate(60px, -40px) scale(1.06) }
-  66%     { transform: translate(-30px, 55px) scale(0.96) }
+  0%,100% { transform: translate(0, 0) scale(1) }
+  33%     { transform: translate(55px,-42px) scale(1.06) }
+  66%     { transform: translate(-32px, 58px) scale(0.96) }
 }
 @keyframes blobDrift2 {
-  0%,100% { transform: translate(0px,   0px) scale(1)    }
-  40%     { transform: translate(-55px, 35px) scale(1.08) }
-  70%     { transform: translate(45px, -65px) scale(0.94) }
+  0%,100% { transform: translate(0, 0) scale(1) }
+  40%     { transform: translate(-52px, 38px) scale(1.08) }
+  70%     { transform: translate(44px,-62px) scale(0.94) }
 }
 @keyframes blobDrift3 {
-  0%,100% { transform: translate(0px,  0px) scale(1)    }
-  50%     { transform: translate(35px, 45px) scale(1.05) }
+  0%,100% { transform: translate(0, 0) scale(1) }
+  50%     { transform: translate(36px, 48px) scale(1.05) }
 }
 .blob1 { animation: blobDrift1 22s ease-in-out infinite; }
 .blob2 { animation: blobDrift2 28s ease-in-out infinite; }
 .blob3 { animation: blobDrift3 18s ease-in-out infinite; }
 
-/* ── Pulse dot ───────────────────────────────────────────────────── */
+/* ── Pulse dot ── */
 @keyframes pulseDot {
   0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6) }
   60%     { box-shadow: 0 0 0 6px rgba(74,222,128,0) }
 }
 .pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
 
-/* ── Button light sweep ──────────────────────────────────────────── */
+/* ── Button light sweep ── */
 @keyframes btnSweep {
-  0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0 }
-  15%  { opacity: 1 }
-  85%  { opacity: 1 }
-  100% { transform: translateX(350%) skewX(-15deg); opacity: 0 }
+  0%         { left: -60%; opacity: 0 }
+  5%         { opacity: 1 }
+  95%        { opacity: 1 }
+  100%       { left: 130%; opacity: 0 }
+}
+.btn-sweep {
+  position: relative;
+  isolation: isolate;
 }
 .btn-sweep::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
-  width: 40%;
-  animation: btnSweep 3s ease-in-out infinite;
+  top: 0; bottom: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-18deg);
+  animation: btnSweep 3.2s ease-in-out infinite;
   pointer-events: none;
   border-radius: inherit;
 }
 .btn-sweep-gold::after {
-  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.5) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.38), transparent);
+  animation-delay: 1.6s;
 }
-
-/* ── Float ───────────────────────────────────────────────────────── */
-@keyframes floatY {
-  0%,100% { transform: translateY(0px)  }
-  50%     { transform: translateY(-8px) }
-}
-.float { animation: floatY 3.5s ease-in-out infinite; }
