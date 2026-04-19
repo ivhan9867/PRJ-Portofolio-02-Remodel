@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="420" viewBox="0 0 560 420">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0e1e"/>
+      <stop offset="100%" style="stop-color:#200f28"/>
+    </linearGradient>
+  </defs>
+  <rect width="560" height="420" fill="url(#bg)"/>
+  <ellipse cx="300" cy="180" rx="240" ry="180" fill="#ec4899" opacity="0.07"/>
+  <!-- Two phones side by side -->
+  <rect x="80" y="50" width="120" height="240" rx="18" fill="#120812" stroke="#ec489920" stroke-width="1.5"/>
+  <rect x="88" y="68" width="104" height="204" rx="10" fill="#1a0f1e"/>
+  <rect x="96" y="78" width="88" height="14" rx="4" fill="#ec4899" opacity="0.3"/>
+  <rect x="96" y="100" width="88" height="52" rx="8" fill="#ec489910"/>
+  <circle cx="140" cy="126" r="16" fill="#ec489918" stroke="#ec489930" stroke-width="1"/>
+  <rect x="96" y="162" width="50" height="6" rx="3" fill="#ffffff18"/>
+  <rect x="96" y="176" width="80" height="5" rx="2.5" fill="#ffffff0d"/>
+  <rect x="96" y="188" width="64" height="5" rx="2.5" fill="#ffffff0a"/>
+  <rect x="96" y="208" width="88" height="28" rx="6" fill="#ec4899" opacity="0.2"/>
+  <rect x="220" y="80" width="120" height="240" rx="18" fill="#120812" stroke="#ec489920" stroke-width="1.5"/>
+  <rect x="228" y="98" width="104" height="204" rx="10" fill="#1a0f1e"/>
+  <rect x="236" y="108" width="88" height="10" rx="3" fill="#ec4899" opacity="0.25"/>
+  <circle cx="280" cy="148" r="28" fill="none" stroke="#ec489930" stroke-width="8"/>
+  <circle cx="280" cy="148" r="28" fill="none" stroke="#ec4899" stroke-width="3" stroke-dasharray="60 120" stroke-dashoffset="-30"/>
+  <rect x="236" y="190" width="88" height="6" rx="3" fill="#ffffff15"/>
+  <rect x="236" y="204" width="66" height="5" rx="2.5" fill="#ffffff0d"/>
+  <rect x="236" y="234" width="50" height="26" rx="6" fill="#ec4899" opacity="0.3"/>
+  <!-- Floating badge -->
+  <rect x="360" y="130" width="140" height="60" rx="12" fill="#1e0d22" stroke="#ec489920" stroke-width="1"/>
+  <circle cx="380" cy="160" r="12" fill="#ec489920"/>
+  <rect x="400" y="150" width="80" height="7" rx="3.5" fill="#ffffff18"/>
+  <rect x="400" y="164" width="60" height="5" rx="2.5" fill="#ec4899" opacity="0.3"/>
+  <text x="80" y="330" font-family="sans-serif" font-size="11" fill="#ec4899" opacity="0.7" letter-spacing="2">PLANS APP</text>
+  <text x="80" y="348" font-family="sans-serif" font-size="9" fill="#ffffff30">Women's Health Mobile App</text>
+</svg>
