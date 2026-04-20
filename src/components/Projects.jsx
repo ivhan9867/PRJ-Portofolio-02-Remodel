@@ -63,7 +63,7 @@ export default function Projects() {
   const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
 
   return (
-    <section id="work" className="relative z-10 px-6 md:px-10 pt-4 pb-20 md:pb-28">
+    <section id="work" style={{ position:"relative", zIndex:10 }} className="px-6 md:px-10 pt-4 pb-20 md:pb-28">
       <div ref={ref} className="mb-8"
         style={{ opacity:inView?1:0, transform:inView?'translateY(0)':'translateY(20px)', transition:'all 0.5s ease' }}>
         <p className="font-body text-[0.7rem] tracking-[0.16em] uppercase text-muted mb-2">My Works</p>

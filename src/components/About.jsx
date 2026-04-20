@@ -1,58 +1,55 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 
-// Inline pill slot that cycles words — exactly like Fini
 function Pill({ words, delay = 0 }) {
-  const [cur, setCur]   = useState(0)
-  const [prev, setPrev] = useState(null)
+  const [cur, setCur] = useState(0)
+  const [exiting, setExiting] = useState(false)
   const timer = useRef(null)
 
   useEffect(() => {
-    timer.current = setTimeout(function tick() {
-      setPrev(cur)
-      const next = (cur + 1) % words.length
-      setCur(next)
-      setPrev(null)
-      timer.current = setTimeout(tick, 2600 + delay * 120)
-    }, 2600 + delay * 120)
-    return () => clearTimeout(timer.current)
-  }, [cur, words, delay])
+    const interval = 2800 + delay * 120
+    timer.current = setInterval(() => {
+      setExiting(true)
+      setTimeout(() => {
+        setCur(i => (i + 1) % words.length)
+        setExiting(false)
+      }, 320)
+    }, interval)
+    return () => clearInterval(timer.current)
+  }, [words, delay])
 
-  // width based on longest word
-  const maxLen = words.reduce((a, b) => a.length > b.length ? a : b, '').length
+  const maxWord = words.reduce((a, b) => a.length > b.length ? a : b, '')
 
   return (
-    <span
-      className="relative inline-flex items-center justify-center overflow-hidden align-middle mx-[3px] flex-shrink-0"
-      style={{
-        height: '1.55em',
-        minWidth: `${Math.max(maxLen * 0.52 + 1.2, 4)}em`,
-        background: 'rgba(255,255,255,0.055)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: '999px',
-        padding: '0 10px',
-        verticalAlign: 'middle',
-      }}
-    >
-      {/* Exiting */}
-      {prev !== null && (
-        <motion.span
-          key={`p${prev}`}
-          className="absolute font-body text-[#e8e6f0] whitespace-nowrap text-[0.82rem]"
-          initial={{ y: 0, opacity: 1 }}
-          animate={{ y: '-110%', opacity: 0 }}
-          transition={{ duration: 0.32, ease: [0.4, 0, 1, 1] }}
-        >{words[prev]}</motion.span>
-      )}
-      {/* Entering */}
-      <motion.span
-        key={`c${cur}`}
-        className="font-body text-[#e8e6f0] whitespace-nowrap text-[0.82rem]"
-        initial={{ y: '110%', opacity: 0 }}
-        animate={{ y: '0%', opacity: 1 }}
-        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
-      >{words[cur]}</motion.span>
+    <span style={{
+      position: 'relative',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      verticalAlign: 'middle',
+      overflow: 'hidden',
+      height: '1.55em',
+      minWidth: `${Math.max(maxWord.length * 0.5 + 1.4, 4)}em`,
+      background: 'rgba(255,255,255,0.055)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderRadius: 999,
+      padding: '0 10px',
+      margin: '0 3px',
+    }}>
+      <span style={{
+        fontFamily: '"DM Sans",sans-serif',
+        fontSize: '0.82rem',
+        color: '#e8e6f0',
+        whiteSpace: 'nowrap',
+        display: 'block',
+        transform: exiting ? 'translateY(-110%)' : 'translateY(0%)',
+        opacity: exiting ? 0 : 1,
+        transition: exiting
+          ? 'transform 0.28s cubic-bezier(0.4,0,1,1), opacity 0.28s'
+          : 'transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s',
+      }}>
+        {words[cur]}
+      </span>
     </span>
   )
 }
@@ -68,17 +65,20 @@ export default function About() {
   const { ref, inView } = useInView({ threshold: 0.06, triggerOnce: true })
 
   return (
-    <section id="about" className="relative z-10 px-6 md:px-10 py-14 md:py-22">
-      <div ref={ref} className="max-w-2xl mx-auto">
+    <section id="about" style={{ position: 'relative', zIndex: 10, padding: '56px 24px' }}>
+      <div ref={ref} style={{ maxWidth: 680, margin: '0 auto' }}>
 
-        {/* Rolling text */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}
-          className="text-muted font-body text-[0.88rem] md:text-[0.95rem] mb-12"
-          style={{ lineHeight: '2.7' }}
-        >
+        {/* Rolling pill text */}
+        <p style={{
+          fontFamily: '"DM Sans",sans-serif',
+          color: 'rgba(82,82,110,1)',
+          fontSize: 'clamp(0.85rem, 2.5vw, 0.95rem)',
+          lineHeight: 2.8,
+          marginBottom: 44,
+          opacity: inView ? 1 : 0,
+          transform: inView ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.6s ease, transform 0.6s ease',
+        }}>
           Expertised in
           <Pill words={['UI/UX Design','Product Design','Visual Design','Interaction Design']} delay={0} />
           with over
@@ -90,29 +90,49 @@ export default function About() {
           Currently works as
           <Pill words={['Lead Designer','Freelance Designer','Product Designer']} delay={3} />
           at Your Company
-        </motion.p>
+        </p>
 
         {/* Skills */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.55, delay: 0.18 }}
-        >
-          <h3 className="font-display font-bold text-[1.1rem] text-[#e8e6f0] mb-4">Skills</h3>
-          <div className="flex flex-wrap gap-2">
+        <div style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? 'translateY(0)' : 'translateY(16px)',
+          transition: 'opacity 0.6s 0.18s ease, transform 0.6s 0.18s ease',
+        }}>
+          <h3 style={{
+            fontFamily: '"Playfair Display",serif',
+            fontWeight: 700, fontSize: '1.1rem',
+            color: '#e8e6f0', marginBottom: 14,
+          }}>Skills</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {SKILLS.map((s, i) => (
-              <motion.span
-                key={s}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={inView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: 0.22 + i * 0.028, duration: 0.3 }}
-                whileHover={{ borderColor: 'rgba(201,168,76,0.5)', color: '#c9a84c', y: -2 }}
-                className="font-body text-[0.76rem] px-3.5 py-1.5 rounded-full border border-white/8 text-muted cursor-none transition-colors duration-200"
+              <span key={s}
                 data-cursor
-              >{s}</motion.span>
+                style={{
+                  fontFamily: '"DM Sans",sans-serif',
+                  fontSize: '0.76rem',
+                  padding: '6px 14px',
+                  borderRadius: 999,
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: 'rgba(82,82,110,1)',
+                  cursor: 'none',
+                  transition: 'border-color 0.2s, color 0.2s, transform 0.2s',
+                  opacity: inView ? 1 : 0,
+                  transitionDelay: `${0.22 + i * 0.025}s`,
+                }}
+                onMouseEnter={e => {
+                  e.target.style.borderColor = 'rgba(201,168,76,0.5)'
+                  e.target.style.color = '#c9a84c'
+                  e.target.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={e => {
+                  e.target.style.borderColor = 'rgba(255,255,255,0.08)'
+                  e.target.style.color = 'rgba(82,82,110,1)'
+                  e.target.style.transform = 'translateY(0)'
+                }}
+              >{s}</span>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
