@@ -11,7 +11,8 @@ import CaseStudy from './pages/CaseStudy'
 
 function Home() {
   return (
-    <div style={{ position:'relative', minHeight:'100vh', background:'#07080f', overflowX:'hidden' }}>
+    <div style={{ position:'relative', minHeight:'100vh', background:'#07080f', overflowX:'hidden' }}
+      className="page-enter">
       <div className="grain-overlay" />
       <GlowBackground />
       <Cursor />
@@ -29,8 +30,6 @@ function Home() {
 
 export default function App() {
   return (
-    // HashRouter works on GitHub Pages with no server config needed
-    // URLs will be: yourdomain.com/#/work/nolimitclass
     <HashRouter>
       <Routes>
         <Route path="/"         element={<Home />} />

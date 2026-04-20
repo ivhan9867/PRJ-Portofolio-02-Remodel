@@ -1,4 +1,4 @@
-import { useInView } from 'react-intersection-observer'
+import { useInView } from '../hooks/useInView'
 
 const JOBS = [
   { role: 'Design Lead',        company: 'Your Company',          period: 'Nov 2023 – Present', current: true },
@@ -8,7 +8,7 @@ const JOBS = [
 ]
 
 export default function Experience() {
-  const { ref, inView } = useInView({ threshold: 0.08, triggerOnce: true })
+  const { ref, inView } = useInView(0.08)
 
   return (
     <section id="experience" style={{ position: 'relative', zIndex: 10, padding: '56px 24px' }}>

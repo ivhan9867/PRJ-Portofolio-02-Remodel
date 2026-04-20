@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useInView } from 'react-intersection-observer'
+import { useInView } from '../hooks/useInView'
 
 function Pill({ words, delay = 0 }) {
   const [cur, setCur] = useState(0)
@@ -62,7 +62,7 @@ const SKILLS = [
 ]
 
 export default function About() {
-  const { ref, inView } = useInView({ threshold: 0.06, triggerOnce: true })
+  const { ref, inView } = useInView(0.06)
 
   return (
     <section id="about" style={{ position: 'relative', zIndex: 10, padding: '56px 24px' }}>

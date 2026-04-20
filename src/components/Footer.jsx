@@ -1,99 +1,110 @@
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
-
-function WordReveal({ text, className, delay = 0 }) {
-  const { ref, inView } = useInView({ threshold: 0.3, triggerOnce: true })
-  return (
-    <div ref={ref} className={className}>
-      {text.split(' ').map((w, i) => (
-        <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.2em]">
-          <motion.span className="inline-block"
-            initial={{ y: '110%' }} animate={inView ? { y: 0 } : {}}
-            transition={{ duration: 0.65, delay: delay + i * 0.07, ease: [0.16,1,0.3,1] }}>
-            {w}
-          </motion.span>
-        </span>
-      ))}
-    </div>
-  )
-}
+import { useInView } from '../hooks/useInView'
 
 export default function Footer() {
   const waveRef = useRef(null)
+  const { ref: ctaRef, inView: ctaInView } = useInView(0.2)
 
   useEffect(() => {
     const canvas = waveRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let animId, t = 0
+    let raf, t = 0
     const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight }
     resize()
-    window.addEventListener('resize', resize)
+    window.addEventListener('resize', resize, { passive: true })
+
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       t += 0.005
       for (let i = 0; i < 4; i++) {
         ctx.beginPath()
-        const amp = 10 + i * 5
-        const yBase = canvas.height * (0.38 + i * 0.13)
+        const amp = 9 + i * 4, yBase = canvas.height * (0.38 + i * 0.13)
         ctx.moveTo(0, yBase)
-        for (let x = 0; x <= canvas.width; x += 3) {
-          ctx.lineTo(x, yBase
+        for (let x = 0; x <= canvas.width; x += 4) {
+          ctx.lineTo(x,
+            yBase
             + Math.sin(x * 0.008 + t + i * 1.3) * amp
-            + Math.cos(x * 0.005 + t * 0.7 + i) * (amp * 0.45))
+            + Math.cos(x * 0.005 + t * 0.7 + i) * amp * 0.4
+          )
         }
-        ctx.strokeStyle = `rgba(255,255,255,${0.045 - i * 0.008})`
+        ctx.strokeStyle = `rgba(255,255,255,${0.04 - i * 0.007})`
         ctx.lineWidth = 1
         ctx.stroke()
       }
-      animId = requestAnimationFrame(draw)
+      raf = requestAnimationFrame(draw)
     }
     draw()
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
   }, [])
 
   return (
     <>
-      {/* CTA pill — matches Fini's big rounded rectangle with gradient */}
-      <section id="contact" className="relative z-10 px-6 md:px-10 pb-8">
-        <div className="relative rounded-[2rem] overflow-hidden"
-          style={{ background: 'linear-gradient(140deg, #18243e 0%, #1c1832 50%, #18243e 100%)' }}>
-          <canvas ref={waveRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-          {/* Subtle glow center */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse at 50% 65%, rgba(55,75,200,0.18) 0%, transparent 60%)' }} />
-
-          <div className="relative px-8 md:px-16 py-20 md:py-24 text-center flex flex-col items-center gap-8">
-            <div>
-              <WordReveal text="Let's Upgrade Your" delay={0}
-                className="font-display font-bold text-[#e8e6f0] leading-tight"
-                style={{ fontSize: 'clamp(1.6rem,5vw,3.2rem)' }} />
-              <WordReveal text="Website/Application." delay={0.1}
-                className="font-display font-bold text-[#e8e6f0] leading-tight"
-                style={{ fontSize: 'clamp(1.6rem,5vw,3.2rem)' }} />
+      {/* CTA pill */}
+      <section id="contact" style={{ position:'relative', zIndex:10 }}
+        className="px-6 md:px-10 pb-8">
+        <div ref={ctaRef} style={{
+          position: 'relative', borderRadius: '2rem', overflow: 'hidden',
+          background: 'linear-gradient(140deg,#18243e 0%,#1c1832 50%,#18243e 100%)',
+        }}>
+          <canvas ref={waveRef} style={{ position:'absolute', inset:0, width:'100%', height:'100%', pointerEvents:'none' }} />
+          <div style={{
+            position:'absolute', inset:0, pointerEvents:'none',
+            background:'radial-gradient(ellipse at 50% 65%,rgba(55,75,200,0.18) 0%,transparent 60%)',
+          }} />
+          <div style={{
+            position:'relative', padding:'80px 32px',
+            display:'flex', flexDirection:'column', alignItems:'center',
+            textAlign:'center', gap:28,
+          }}>
+            <div style={{
+              opacity: ctaInView ? 1 : 0,
+              transform: ctaInView ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.65s ease, transform 0.65s ease',
+            }}>
+              <div style={{ fontFamily:'"Playfair Display",serif', fontWeight:700, color:'#e8e6f0', lineHeight:1.15, fontSize:'clamp(1.7rem,5vw,3.2rem)' }}>
+                Let's Upgrade Your
+              </div>
+              <div style={{ fontFamily:'"Playfair Display",serif', fontWeight:700, color:'#e8e6f0', lineHeight:1.15, fontSize:'clamp(1.7rem,5vw,3.2rem)' }}>
+                Website/Application.
+              </div>
             </div>
-
-            <motion.a href="mailto:vhan47@email.com" data-cursor
-              initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-              className="relative overflow-hidden btn-sweep px-8 py-3 bg-[#0c1020] text-[#e8e6f0] rounded-full font-body text-[0.85rem] font-medium border border-white/10 hover:border-white/20 transition-all duration-300">
-              Contact Me
-            </motion.a>
+            <a href="mailto:vhan47@email.com" data-cursor
+              className="btn-sweep"
+              style={{
+                padding:'12px 32px', borderRadius:999,
+                background:'rgba(10,12,22,0.9)', color:'#e8e6f0',
+                fontFamily:'"DM Sans",sans-serif', fontSize:'0.88rem', fontWeight:500,
+                border:'1.5px solid rgba(255,255,255,0.12)',
+                textDecoration:'none',
+                opacity: ctaInView ? 1 : 0,
+                transform: ctaInView ? 'translateY(0)' : 'translateY(16px)',
+                transition:'opacity 0.5s 0.3s ease, transform 0.5s 0.3s ease, border-color 0.3s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.22)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.12)'}
+            >Contact Me</a>
           </div>
         </div>
       </section>
 
       {/* Footer bar */}
-      <footer className="relative z-10 px-6 md:px-10 py-6 flex flex-col md:flex-row justify-between items-center gap-3 border-t border-white/[0.05]">
-        <span className="font-display text-[0.8rem] text-muted">© Vhan._47 2025</span>
-        <div className="flex items-center gap-5">
+      <footer style={{ position:'relative', zIndex:10 }}
+        className="px-6 md:px-10 py-6 flex flex-col md:flex-row justify-between items-center gap-3 border-t border-white/[0.05]">
+        <span style={{ fontFamily:'"Playfair Display",serif', fontSize:'0.8rem', color:'rgba(82,82,110,1)' }}>
+          © Vhan._47 2025
+        </span>
+        <div style={{ display:'flex', gap:20 }}>
           {[['LinkedIn','#'],['Mail','mailto:vhan47@email.com'],['Instagram','#']].map(([s,h]) => (
-            <a key={s} href={h} data-cursor
-              className="font-mono text-[0.68rem] tracking-[0.1em] uppercase text-muted hover:text-[#e8e6f0] transition-colors duration-300">
-              {s}
-            </a>
+            <a key={s} href={h} data-cursor style={{
+              fontFamily:'"DM Mono",monospace', fontSize:'0.68rem',
+              letterSpacing:'0.1em', textTransform:'uppercase',
+              color:'rgba(82,82,110,1)', textDecoration:'none',
+              transition:'color 0.3s',
+            }}
+              onMouseEnter={e => e.target.style.color='#e8e6f0'}
+              onMouseLeave={e => e.target.style.color='rgba(82,82,110,1)'}
+            >{s}</a>
           ))}
         </div>
       </footer>

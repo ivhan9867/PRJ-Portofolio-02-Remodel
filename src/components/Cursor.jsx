@@ -1,75 +1,91 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function Cursor() {
   const dotRef  = useRef(null)
   const ringRef = useRef(null)
-  const pos     = useRef({ x: -200, y: -200 })
-  const ring    = useRef({ x: -200, y: -200 })
-  const [big, setBig]     = useState(false)
-  const [visible, setVisible] = useState(false)
-  const raf = useRef(null)
 
   useEffect(() => {
-    // Only show on non-touch devices
-    if (window.matchMedia('(hover: none)').matches) return
+    // Skip on touch devices entirely
+    if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return
 
+    const dot  = dotRef.current
+    const ring = ringRef.current
+    if (!dot || !ring) return
+
+    let mx = -100, my = -100
+    let rx = -100, ry = -100
+    let big = false
+    let raf
+
+    // Show cursor on first move
     const onMove = (e) => {
-      if (!visible) setVisible(true)
-      pos.current = { x: e.clientX, y: e.clientY }
-      if (dotRef.current)
-        dotRef.current.style.transform = `translate(${e.clientX - 5}px,${e.clientY - 5}px)`
+      mx = e.clientX; my = e.clientY
+      if (dot.style.opacity === '0') {
+        dot.style.opacity  = '1'
+        ring.style.opacity = '1'
+      }
     }
-    window.addEventListener('mousemove', onMove)
 
-    const lerp = () => {
-      ring.current.x += (pos.current.x - ring.current.x - 20) * 0.11
-      ring.current.y += (pos.current.y - ring.current.y - 20) * 0.11
-      if (ringRef.current)
-        ringRef.current.style.transform = `translate(${ring.current.x}px,${ring.current.y}px)`
-      raf.current = requestAnimationFrame(lerp)
+    const onOver = (e) => {
+      if (e.target.closest('a,button,[data-cursor]') && !big) {
+        big = true
+        ring.style.width  = '50px'
+        ring.style.height = '50px'
+        ring.style.borderColor = '#c9a84c'
+        ring.style.background  = 'rgba(201,168,76,0.06)'
+      }
     }
-    raf.current = requestAnimationFrame(lerp)
+    const onOut = (e) => {
+      if (e.target.closest('a,button,[data-cursor]') && big) {
+        big = false
+        ring.style.width  = '40px'
+        ring.style.height = '40px'
+        ring.style.borderColor = 'rgba(201,168,76,0.4)'
+        ring.style.background  = 'transparent'
+      }
+    }
 
-    const over = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(true)  }
-    const out  = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(false) }
-    document.addEventListener('mouseover',  over)
-    document.addEventListener('mouseout',   out)
+    // Single rAF loop for ring — dot moves instantly via transform
+    const loop = () => {
+      // Dot: instant snap
+      dot.style.transform = `translate(${mx-5}px,${my-5}px)`
+      // Ring: lerp for smooth follow
+      rx += (mx - rx - 20) * 0.12
+      ry += (my - ry - 20) * 0.12
+      ring.style.transform = `translate(${rx}px,${ry}px)`
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    document.addEventListener('mouseover', onOver, { passive: true })
+    document.addEventListener('mouseout',  onOut,  { passive: true })
 
     return () => {
+      cancelAnimationFrame(raf)
       window.removeEventListener('mousemove', onMove)
-      cancelAnimationFrame(raf.current)
-      document.removeEventListener('mouseover',  over)
-      document.removeEventListener('mouseout',   out)
+      document.removeEventListener('mouseover', onOver)
+      document.removeEventListener('mouseout',  onOut)
     }
   }, [])
 
-  // Don't render on touch devices
-  if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return null
-
   return (
     <>
-      <div ref={dotRef}
-        style={{
-          position:'fixed', top:0, left:0, zIndex:99999,
-          width:10, height:10, borderRadius:'50%',
-          background:'#c9a84c', mixBlendMode:'difference',
-          pointerEvents:'none',
-          opacity: visible ? 1 : 0,
-          transition:'opacity 0.3s',
-        }}
-      />
-      <div ref={ringRef}
-        style={{
-          position:'fixed', top:0, left:0, zIndex:99998,
-          borderRadius:'50%', pointerEvents:'none',
-          border: big ? '1.5px solid #c9a84c' : '1px solid rgba(201,168,76,0.4)',
-          background: big ? 'rgba(201,168,76,0.06)' : 'transparent',
-          width: big ? 52 : 40,
-          height: big ? 52 : 40,
-          transition:'width 0.25s,height 0.25s,border-color 0.25s,background 0.25s',
-          opacity: visible ? 1 : 0,
-        }}
-      />
+      <div ref={dotRef} style={{
+        position: 'fixed', top: 0, left: 0, zIndex: 99999,
+        width: 10, height: 10, borderRadius: '50%',
+        background: '#c9a84c', mixBlendMode: 'difference',
+        pointerEvents: 'none', opacity: 0,
+        willChange: 'transform',
+      }} />
+      <div ref={ringRef} style={{
+        position: 'fixed', top: 0, left: 0, zIndex: 99998,
+        width: 40, height: 40, borderRadius: '50%',
+        border: '1px solid rgba(201,168,76,0.4)',
+        pointerEvents: 'none', opacity: 0,
+        willChange: 'transform',
+        transition: 'width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease',
+      }} />
     </>
   )
 }
