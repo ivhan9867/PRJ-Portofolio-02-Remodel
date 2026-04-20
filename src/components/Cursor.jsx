@@ -3,13 +3,18 @@ import { useEffect, useRef, useState } from 'react'
 export default function Cursor() {
   const dotRef  = useRef(null)
   const ringRef = useRef(null)
-  const pos     = useRef({ x: -100, y: -100 })
-  const ring    = useRef({ x: -100, y: -100 })
-  const [big, setBig] = useState(false)
+  const pos     = useRef({ x: -200, y: -200 })
+  const ring    = useRef({ x: -200, y: -200 })
+  const [big, setBig]     = useState(false)
+  const [visible, setVisible] = useState(false)
   const raf = useRef(null)
 
   useEffect(() => {
+    // Only show on non-touch devices
+    if (window.matchMedia('(hover: none)').matches) return
+
     const onMove = (e) => {
+      if (!visible) setVisible(true)
       pos.current = { x: e.clientX, y: e.clientY }
       if (dotRef.current)
         dotRef.current.style.transform = `translate(${e.clientX - 5}px,${e.clientY - 5}px)`
@@ -25,8 +30,8 @@ export default function Cursor() {
     }
     raf.current = requestAnimationFrame(lerp)
 
-    const over  = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(true)  }
-    const out   = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(false) }
+    const over = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(true)  }
+    const out  = (e) => { if (e.target.closest('a,button,[data-cursor]')) setBig(false) }
     document.addEventListener('mouseover',  over)
     document.addEventListener('mouseout',   out)
 
@@ -38,10 +43,33 @@ export default function Cursor() {
     }
   }, [])
 
+  // Don't render on touch devices
+  if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return null
+
   return (
     <>
-      <div ref={dotRef}  className="fixed top-0 left-0 w-[10px] h-[10px] rounded-full bg-accent pointer-events-none z-[99999]" style={{ mixBlendMode:'difference' }} />
-      <div ref={ringRef} className={`fixed top-0 left-0 rounded-full pointer-events-none z-[99998] border transition-all duration-300 ${big ? 'w-[52px] h-[52px] border-accent bg-accent/5' : 'w-[40px] h-[40px] border-accent/40'}`} />
+      <div ref={dotRef}
+        style={{
+          position:'fixed', top:0, left:0, zIndex:99999,
+          width:10, height:10, borderRadius:'50%',
+          background:'#c9a84c', mixBlendMode:'difference',
+          pointerEvents:'none',
+          opacity: visible ? 1 : 0,
+          transition:'opacity 0.3s',
+        }}
+      />
+      <div ref={ringRef}
+        style={{
+          position:'fixed', top:0, left:0, zIndex:99998,
+          borderRadius:'50%', pointerEvents:'none',
+          border: big ? '1.5px solid #c9a84c' : '1px solid rgba(201,168,76,0.4)',
+          background: big ? 'rgba(201,168,76,0.06)' : 'transparent',
+          width: big ? 52 : 40,
+          height: big ? 52 : 40,
+          transition:'width 0.25s,height 0.25s,border-color 0.25s,background 0.25s',
+          opacity: visible ? 1 : 0,
+        }}
+      />
     </>
   )
 }

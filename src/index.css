@@ -3,103 +3,94 @@
 @tailwind utilities;
 
 @layer base {
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
   body {
-    background: #07080f;
-    color: #e8e6f0;
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-    cursor: none;
-    -webkit-font-smoothing: antialiased;
+    background:#07080f; color:#e8e6f0;
+    font-family:'DM Sans',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
-
-  ::-webkit-scrollbar { width: 0; }
-  * { scrollbar-width: none; }
-  ::selection { background: rgba(201,168,76,0.2); color: #e8e6f0; }
+  /* Only hide cursor on desktop */
+  @media (hover: hover) { body { cursor:none; } }
+  ::-webkit-scrollbar { width:0; }
+  * { scrollbar-width:none; }
+  ::selection { background:rgba(201,168,76,0.2); color:#e8e6f0; }
 }
 
-/* ── Grain — fixed, NO transform, uses background-position only ── */
+/* ── Grain — NO transform/translate, background-position only ── */
 .grain-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9990;
-  overflow: hidden;
+  position:fixed; inset:0;
+  pointer-events:none; z-index:9990;
+  overflow:hidden;
+  contain:strict;
 }
 .grain-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.038;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 250px 250px;
-  animation: grainPos 0.45s steps(1) infinite;
+  content:'';
+  position:absolute; inset:0;
+  opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  animation:grainPos 0.5s steps(1) infinite;
+  will-change:background-position;
 }
 @keyframes grainPos {
-  0%   { background-position: 0 0 }
-  11%  { background-position: -30px -20px }
-  22%  { background-position: 20px -40px }
-  33%  { background-position: -10px 30px }
-  44%  { background-position: 40px 15px }
-  55%  { background-position: -20px -15px }
-  66%  { background-position: 15px 40px }
-  77%  { background-position: -40px 8px }
-  88%  { background-position: 25px -30px }
-  100% { background-position: 0 0 }
+  0%   {background-position:0 0}
+  12%  {background-position:-25px -18px}
+  24%  {background-position:18px -36px}
+  36%  {background-position:-12px 28px}
+  48%  {background-position:36px 12px}
+  60%  {background-position:-18px -12px}
+  72%  {background-position:12px 36px}
+  84%  {background-position:-36px 6px}
+  100% {background-position:0 0}
 }
 
-/* ── Blob keyframes ── */
+/* ── Blob drift — GPU-only transform ── */
 @keyframes blobDrift1 {
-  0%,100% { transform: translate(0, 0) scale(1) }
-  33%     { transform: translate(55px,-42px) scale(1.06) }
-  66%     { transform: translate(-32px, 58px) scale(0.96) }
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  33%    {transform:translate3d(55px,-42px,0) scale(1.05)}
+  66%    {transform:translate3d(-30px,55px,0) scale(0.97)}
 }
 @keyframes blobDrift2 {
-  0%,100% { transform: translate(0, 0) scale(1) }
-  40%     { transform: translate(-52px, 38px) scale(1.08) }
-  70%     { transform: translate(44px,-62px) scale(0.94) }
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  40%    {transform:translate3d(-50px,36px,0) scale(1.07)}
+  70%    {transform:translate3d(42px,-60px,0) scale(0.95)}
 }
 @keyframes blobDrift3 {
-  0%,100% { transform: translate(0, 0) scale(1) }
-  50%     { transform: translate(36px, 48px) scale(1.05) }
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%    {transform:translate3d(34px,44px,0) scale(1.04)}
 }
-.blob1 { animation: blobDrift1 22s ease-in-out infinite; }
-.blob2 { animation: blobDrift2 28s ease-in-out infinite; }
-.blob3 { animation: blobDrift3 18s ease-in-out infinite; }
+.blob1{animation:blobDrift1 14s ease-in-out infinite;}
+.blob2{animation:blobDrift2 18s ease-in-out infinite;}
+.blob3{animation:blobDrift3 11s ease-in-out infinite;}
 
 /* ── Pulse dot ── */
 @keyframes pulseDot {
-  0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6) }
-  60%     { box-shadow: 0 0 0 6px rgba(74,222,128,0) }
+  0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)}
+  60%    {box-shadow:0 0 0 6px rgba(74,222,128,0)}
 }
-.pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+.pulse-dot{animation:pulseDot 2s ease-in-out infinite;}
 
-/* ── Button light sweep ── */
+/* ── Button sweep — CSS only, no JS needed ── */
 @keyframes btnSweep {
-  0%         { left: -60%; opacity: 0 }
-  5%         { opacity: 1 }
-  95%        { opacity: 1 }
-  100%       { left: 130%; opacity: 0 }
+  0%  {left:-60%;opacity:0}
+  5%  {opacity:1}
+  95% {opacity:1}
+  100%{left:130%;opacity:0}
 }
-.btn-sweep {
-  position: relative;
-  isolation: isolate;
-}
+.btn-sweep{position:relative;isolation:isolate;}
 .btn-sweep::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 35%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
-  transform: skewX(-18deg);
-  animation: btnSweep 3.2s ease-in-out infinite;
-  pointer-events: none;
-  border-radius: inherit;
+  content:'';
+  position:absolute; top:0; bottom:0;
+  width:35%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  transform:skewX(-18deg);
+  animation:btnSweep 3.2s ease-in-out infinite;
+  pointer-events:none;
+  border-radius:inherit;
 }
 .btn-sweep-gold::after {
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.38), transparent);
-  animation-delay: 1.6s;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.35),transparent);
+  animation-delay:1.6s;
 }
