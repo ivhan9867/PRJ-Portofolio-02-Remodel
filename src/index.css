@@ -194,3 +194,43 @@ html {
 .page-enter {
   animation: pageFade 0.4s ease both;
 }
+
+/* ── Mobile: stack buttons vertically on very small screens ── */
+@media (max-width: 400px) {
+  .hero-btns {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ── Projects: on desktop make cards slightly more compact ── */
+@media (min-width: 768px) {
+  .project-card-inner {
+    padding: 28px 32px !important;
+  }
+}
+
+/* ── Smooth page transition ── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageFadeIn 0.4s ease both;
+}
+
+/* ── Avatar glow ring - subtle outer ring like Fini ── */
+.avatar-glow {
+  position: relative;
+}
+.avatar-glow::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(60,100,220,0.4), rgba(100,60,200,0.3));
+  filter: blur(6px);
+  z-index: -1;
+}
